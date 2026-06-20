@@ -48,10 +48,8 @@
   .btn.ghost{background:#f0e6d4;color:#7a5a36;flex:none;padding:13px 18px;}
   .kbd{font-size:12px;color:var(--sub);text-align:center;margin-top:12px;}
   .kbd b{background:#fff;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:#9a4a1f;}
-  /* start */
   .center{text-align:center;}
   .center p{color:var(--sub);}
-  /* result */
   .score{font-size:46px;font-weight:900;color:var(--accent);text-align:center;margin:4px 0;}
   .score small{font-size:18px;color:var(--sub);font-weight:700;}
   .grade{text-align:center;font-size:17px;font-weight:800;margin-bottom:8px;}
@@ -85,7 +83,7 @@
 
 <script>
 /* ---------- 문제 데이터 ---------- */
-const QUIZ = [
+var QUIZ = [
  {t:"mc", topic:"주격(사람)",
   q:'I know a girl <span class="blank">(   )</span> can speak five languages.',
   hint:"선행사가 사람이고, 관계사절 안에서 주어 역할이에요.",
@@ -126,7 +124,7 @@ const QUIZ = [
   q:'The man <span class="blank">(   )</span> I met yesterday was very kind.',
   hint:"선행사가 사람이고, 관계사절 안 동사 met의 목적어 역할이에요.",
   opts:["which","whose","who(m)","what","of which"], a:2,
-  exp:"선행사 the man(사람)이 met의 목적어 역할을 하므로 목적격 who(m)(또는 that)을 써요."},
+  exp:"선행사 the man(사람)이 met의 목적어 역할을 하므로 목적격 who(m)/that을 써요."},
 
  {t:"mc", topic:"소유격(사물)",
   q:'That is the house <span class="blank">(   )</span> roof is painted red.',
@@ -208,83 +206,84 @@ const QUIZ = [
 ];
 
 /* ---------- 상태 ---------- */
-let idx=0, started=false, done=false;
-let answers=new Array(QUIZ.length).fill(null); // mc: index, sa: string
-const card=document.getElementById('card');
-const toast=document.getElementById('toast');
-let studentName="";
+var idx=0, started=false, done=false;
+var answers=new Array(QUIZ.length).fill(null);
+var card=document.getElementById('card');
+var toast=document.getElementById('toast');
+var studentName="";
 
 function showToast(msg){toast.textContent=msg;toast.classList.add('show');
-  setTimeout(()=>toast.classList.remove('show'),1700);}
+  setTimeout(function(){toast.classList.remove('show');},1700);}
 
 /* ---------- 시작 화면 ---------- */
 function renderStart(){
-  card.innerHTML=`
-    <div class="center">
-      <div style="font-size:40px">✏️</div>
-      <h2 style="margin:6px 0 2px;color:#9a4a1f">관계대명사 마스터 퀴즈</h2>
-      <p><b>삼육중 2학년 반정욱</b> 학생 화이팅! 💪<br>who · which · that · whose 까지 한 번에!<br>총 <b>20문항</b> · 객관식 + 주관식</p>
-      <input class="ans" id="nameInput" placeholder="이름을 입력하세요" value="반정욱" style="margin:14px 0 4px" maxlength="20">
-      <div class="row"><button class="btn primary" id="startBtn">시작하기 ▶</button></div>
-      <div class="kbd">팁&nbsp; 객관식은 <b>1</b>~<b>5</b> 숫자키, 정답 제출은 <b>Enter</b> 키로!</div>
-    </div>`;
-  const ni=document.getElementById('nameInput');
+  card.innerHTML=
+    '<div class="center">'+
+      '<div style="font-size:40px">✏️</div>'+
+      '<h2 style="margin:6px 0 2px;color:#9a4a1f">관계대명사 마스터 퀴즈</h2>'+
+      '<p><b>삼육중 2학년 반정욱</b> 학생 화이팅! 💪<br>who · which · that · whose 까지 한 번에!<br>총 <b>20문항</b> · 객관식 + 주관식</p>'+
+      '<input class="ans" id="nameInput" placeholder="이름을 입력하세요" value="반정욱" style="margin:14px 0 4px" maxlength="20">'+
+      '<div class="row"><button class="btn primary" id="startBtn">시작하기 ▶</button></div>'+
+      '<div class="kbd">팁&nbsp; 객관식은 <b>1</b>~<b>5</b> 숫자키, 정답 제출은 <b>Enter</b> 키로!</div>'+
+    '</div>';
+  var ni=document.getElementById('nameInput');
   ni.focus();
   document.getElementById('startBtn').onclick=start;
-  ni.addEventListener('keydown',e=>{if(e.key==='Enter')start();});
+  ni.addEventListener('keydown',function(e){if(e.key==='Enter')start();});
 }
 function start(){
-  const ni=document.getElementById('nameInput');
+  var ni=document.getElementById('nameInput');
   studentName=(ni&&ni.value.trim())||"학생";
   started=true; idx=0; renderQ();
 }
 
 /* ---------- 문제 화면 ---------- */
 function renderQ(){
-  const Q=QUIZ[idx];
-  const pct=Math.round((idx)/QUIZ.length*100);
-  let body=`
-    <div class="bar"><i style="width:${pct}%"></i></div>
-    <div class="qmeta">Q${idx+1} / ${QUIZ.length}
-      <span class="qtype">${Q.t==='mc'?'객관식':'주관식'}</span>
-      <span class="qtype">${Q.topic}</span></div>
-    <div class="qtext">${Q.q}</div>
-    <div class="hint">💡 ${Q.hint}</div>`;
+  var Q=QUIZ[idx];
+  var pct=Math.round((idx)/QUIZ.length*100);
+  var body=
+    '<div class="bar"><i style="width:'+pct+'%"></i></div>'+
+    '<div class="qmeta">Q'+(idx+1)+' / '+QUIZ.length+
+      ' <span class="qtype">'+(Q.t==='mc'?'객관식':'주관식')+'</span>'+
+      ' <span class="qtype">'+Q.topic+'</span></div>'+
+    '<div class="qtext">'+Q.q+'</div>'+
+    '<div class="hint">💡 '+Q.hint+'</div>';
   if(Q.t==='mc'){
-    body+=`<div id="opts">`;
-    Q.opts.forEach((o,i)=>{
-      const sel=answers[idx]===i?'sel':'';
-      body+=`<div class="opt ${sel}" data-i="${i}"><span class="num">${i+1}</span><span>${o}</span></div>`;
+    body+='<div id="opts">';
+    Q.opts.forEach(function(o,i){
+      var sel=answers[idx]===i?'sel':'';
+      body+='<div class="opt '+sel+'" data-i="'+i+'"><span class="num">'+(i+1)+'</span><span>'+o+'</span></div>';
     });
-    body+=`</div>`;
+    body+='</div>';
   }else{
-    const v=answers[idx]||"";
-    body+=`<input class="ans" id="saInput" placeholder="정답을 입력하세요" value="${v.replace(/"/g,'&quot;')}" autocomplete="off">`;
+    var v=answers[idx]||"";
+    body+='<input class="ans" id="saInput" placeholder="정답을 입력하세요" value="'+v.replace(/"/g,'&quot;')+'" autocomplete="off">';
   }
-  body+=`<div class="row">`;
-  if(idx>0) body+=`<button class="btn ghost" id="prevBtn">← 이전</button>`;
-  body+=`<button class="btn primary" id="nextBtn">${idx===QUIZ.length-1?'제출하고 결과 보기 🎉':'다음 →'}</button></div>`;
-  body+=`<div class="kbd">${Q.t==='mc'?'<b>1</b>~<b>'+Q.opts.length+'</b> 숫자키로 선택, ':''}<b>Enter</b> 키로 ${idx===QUIZ.length-1?'제출':'다음'}</div>`;
+  body+='<div class="row">';
+  if(idx>0) body+='<button class="btn ghost" id="prevBtn">← 이전</button>';
+  body+='<button class="btn primary" id="nextBtn">'+(idx===QUIZ.length-1?'제출하고 결과 보기 🎉':'다음 →')+'</button></div>';
+  body+='<div class="kbd">'+(Q.t==='mc'?'<b>1</b>~<b>'+Q.opts.length+'</b> 숫자키로 선택, ':'')+'<b>Enter</b> 키로 '+(idx===QUIZ.length-1?'제출':'다음')+'</div>';
   card.innerHTML=body;
 
   if(Q.t==='mc'){
-    card.querySelectorAll('.opt').forEach(el=>{
-      el.onclick=()=>{answers[idx]=+el.dataset.i;
-        card.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+    var els=card.querySelectorAll('.opt');
+    els.forEach(function(el){
+      el.onclick=function(){answers[idx]=+el.dataset.i;
+        card.querySelectorAll('.opt').forEach(function(o){o.classList.remove('sel');});
         el.classList.add('sel');};
     });
   }else{
-    const si=document.getElementById('saInput'); si.focus();
-    const len=si.value.length; si.setSelectionRange(len,len);
-    si.addEventListener('input',()=>{answers[idx]=si.value;});
+    var si=document.getElementById('saInput'); si.focus();
+    var len=si.value.length; si.setSelectionRange(len,len);
+    si.addEventListener('input',function(){answers[idx]=si.value;});
   }
-  const nb=document.getElementById('nextBtn'); nb.onclick=next;
-  const pb=document.getElementById('prevBtn'); if(pb) pb.onclick=()=>{idx--;renderQ();};
+  var nb=document.getElementById('nextBtn'); nb.onclick=next;
+  var pb=document.getElementById('prevBtn'); if(pb) pb.onclick=function(){idx--;renderQ();};
 }
 
 function next(){
-  const Q=QUIZ[idx];
-  if(Q.t==='sa'){const si=document.getElementById('saInput'); answers[idx]=si.value.trim();}
+  var Q=QUIZ[idx];
+  if(Q.t==='sa'){var si=document.getElementById('saInput'); answers[idx]=si.value.trim();}
   if(answers[idx]===null||answers[idx]===""||answers[idx]===undefined){
     showToast("답을 선택하거나 입력해 주세요!"); return;
   }
@@ -294,110 +293,116 @@ function next(){
 
 /* ---------- 채점 ---------- */
 function isCorrect(i){
-  const Q=QUIZ[i], ans=answers[i];
+  var Q=QUIZ[i], ans=answers[i];
   if(Q.t==='mc') return ans===Q.a;
   if(ans==null) return false;
-  const norm=s=>s.toLowerCase().replace(/\s+/g,' ').replace(/[.。]/g,'').trim();
-  return Q.accept.map(norm).includes(norm(ans));
+  var norm=function(s){return s.toLowerCase().replace(/\s+/g,' ').replace(/[.。]/g,'').trim();};
+  return Q.accept.map(norm).indexOf(norm(ans))>=0;
 }
 function myAnswerText(i){
-  const Q=QUIZ[i], ans=answers[i];
+  var Q=QUIZ[i], ans=answers[i];
   if(ans==null||ans==="") return "(무응답)";
   return Q.t==='mc'? (ans+1)+". "+Q.opts[ans] : ans;
 }
 function correctText(i){
-  const Q=QUIZ[i];
+  var Q=QUIZ[i];
   return Q.t==='mc'? (Q.a+1)+". "+Q.opts[Q.a] : Q.a;
 }
 
 /* ---------- 결과 화면 ---------- */
 function renderResult(){
   done=true;
-  let correct=0; QUIZ.forEach((q,i)=>{if(isCorrect(i))correct++;});
-  const total=QUIZ.length;
-  const wrong=[]; QUIZ.forEach((q,i)=>{if(!isCorrect(i))wrong.push(i);});
-  let grade,emoji;
-  const r=correct/total;
+  var correct=0; QUIZ.forEach(function(q,i){if(isCorrect(i))correct++;});
+  var total=QUIZ.length;
+  var wrong=[]; QUIZ.forEach(function(q,i){if(!isCorrect(i))wrong.push(i);});
+  var grade,emoji;
+  var r=correct/total;
   if(r===1){grade="완벽해요! 만점!";emoji="🏆";}
   else if(r>=0.8){grade="아주 잘했어요!";emoji="🌟";}
   else if(r>=0.6){grade="좋아요, 조금만 더!";emoji="👍";}
   else{grade="복습이 필요해요. 화이팅!";emoji="💪";}
 
-  let html=`
-    <div class="bar"><i style="width:100%"></i></div>
-    <div class="center">
-      <div style="font-size:38px">${emoji}</div>
-      <div class="score">${correct}<small> / ${total}</small></div>
-      <div class="grade">${studentName} 학생 — ${grade}</div>
-    </div>
-    <h3 style="margin:18px 0 6px;color:#9a4a1f">📝 문제별 해설</h3>`;
+  var html=
+    '<div class="bar"><i style="width:100%"></i></div>'+
+    '<div class="center">'+
+      '<div style="font-size:38px">'+emoji+'</div>'+
+      '<div class="score">'+correct+'<small> / '+total+'</small></div>'+
+      '<div class="grade">'+studentName+' 학생 — '+grade+'</div>'+
+    '</div>'+
+    '<h3 style="margin:18px 0 6px;color:#9a4a1f">📝 문제별 해설</h3>';
 
-  QUIZ.forEach((q,i)=>{
-    const ok=isCorrect(i);
-    html+=`<div class="rev ${ok?'ok':'no'}">
-      <div class="tag">${ok?'✅ 정답':'❌ 오답'} · Q${i+1} (${q.topic})</div>
-      <div class="q">${q.q}</div>
-      <div class="line mine">내 답: ${myAnswerText(i)}</div>
-      ${ok?'':`<div class="line corr">정답: ${correctText(i)}</div>`}
-      <div class="exp">📖 ${q.exp}</div>
-    </div>`;
+  QUIZ.forEach(function(q,i){
+    var ok=isCorrect(i);
+    html+='<div class="rev '+(ok?'ok':'no')+'">'+
+      '<div class="tag">'+(ok?'✅ 정답':'❌ 오답')+' · Q'+(i+1)+' ('+q.topic+')</div>'+
+      '<div class="q">'+q.q+'</div>'+
+      '<div class="line mine">내 답: '+myAnswerText(i)+'</div>'+
+      (ok?'':'<div class="line corr">정답: '+correctText(i)+'</div>')+
+      '<div class="exp">📖 '+q.exp+'</div>'+
+    '</div>';
   });
 
-  html+=`
-    <div class="row" style="flex-direction:column;gap:10px">
-      <button class="btn primary" id="copyBtn">📋 지나티처에게 결과 보내기 (메시지 복사)</button>
-      <button class="btn ghost" id="retryBtn" style="flex:1;padding:13px">🔁 다시 풀기</button>
-    </div>
-    <div class="kbd">복사 후 카카오톡 지나티처에게 붙여넣기 하면 돼요!</div>
-    <div class="end">수고했습니당 ~~~ ㅎㅎㅎ</div>`;
+  html+=
+    '<div class="row" style="flex-direction:column;gap:10px">'+
+      '<button class="btn primary" id="copyBtn">📋 지나티처에게 결과 보내기 (메시지 복사)</button>'+
+      '<button class="btn ghost" id="retryBtn" style="flex:1;padding:13px">🔁 다시 풀기</button>'+
+    '</div>'+
+    '<div class="kbd">복사 후 카카오톡 지나티처에게 붙여넣기 하면 돼요!</div>'+
+    '<div class="end">수고했습니당 ~~~ ㅎㅎㅎ</div>';
   card.innerHTML=html;
   window.scrollTo(0,0);
 
-  document.getElementById('copyBtn').onclick=()=>copyResult(correct,total,wrong);
-  document.getElementById('retryBtn').onclick=()=>{answers=new Array(QUIZ.length).fill(null);idx=0;done=false;renderStart();};
+  document.getElementById('copyBtn').onclick=function(){copyResult(correct,total,wrong);};
+  document.getElementById('retryBtn').onclick=function(){answers=new Array(QUIZ.length).fill(null);idx=0;done=false;renderStart();};
 }
 
 /* ---------- 카톡 메시지 복사 ---------- */
 function copyResult(correct,total,wrong){
-  const today=new Date();
-  const ds=`${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}`;
-  let msg=`[관계대명사 변형문제 결과]\n`;
-  msg+=`👩‍🏫 지나티처님께\n`;
-  msg+=`이름: ${studentName}\n날짜: ${ds}\n`;
-  msg+=`점수: ${correct} / ${total}\n`;
-  if(wrong.length===0){ msg+=`\n🎉 전부 맞았어요! 완벽합니다!\n`; }
+  var today=new Date();
+  var ds=today.getFullYear()+'.'+(today.getMonth()+1)+'.'+today.getDate();
+  var msg='[관계대명사 변형문제 결과]\n';
+  msg+='👩‍🏫 지나티처님께\n';
+  msg+='학교/학년: 삼육중 2학년\n';
+  msg+='이름: '+studentName+'\n날짜: '+ds+'\n';
+  msg+='점수: '+correct+' / '+total+'\n';
+  if(wrong.length===0){ msg+='\n🎉 전부 맞았어요! 완벽합니다!\n'; }
   else{
-    msg+=`\n틀린 문제(${wrong.length}개):\n`;
-    wrong.forEach(i=>{
-      msg+=`· Q${i+1} (${QUIZ[i].topic}) — 내 답: ${myAnswerText(i)} / 정답: ${correctText(i)}\n`;
+    msg+='\n틀린 문제('+wrong.length+'개):\n';
+    wrong.forEach(function(i){
+      msg+='· Q'+(i+1)+' ('+QUIZ[i].topic+') — 내 답: '+myAnswerText(i)+' / 정답: '+correctText(i)+'\n';
     });
   }
-  msg+=`\n수고했습니당 ~~~ ㅎㅎㅎ`;
+  msg+='\n수고했습니당 ~~~ ㅎㅎㅎ';
 
-  const fallback=()=>{ const ta=document.createElement('textarea');
+  var fallback=function(){ var ta=document.createElement('textarea');
     ta.value=msg; document.body.appendChild(ta); ta.select();
     try{document.execCommand('copy');showToast("메시지가 복사됐어요! 카톡에 붙여넣기 하세요 ✨");}
     catch(e){showToast("복사 실패 — 길게 눌러 복사해 주세요");}
     document.body.removeChild(ta);};
   if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(msg).then(
-      ()=>showToast("메시지가 복사됐어요! 카톡에 붙여넣기 하세요 ✨"), fallback);
+      function(){showToast("메시지가 복사됐어요! 카톡에 붙여넣기 하세요 ✨");}, fallback);
   }else fallback();
 }
 
 /* ---------- 전역 키 입력 ---------- */
-document.addEventListener('keydown',e=>{
-  if(!started||done) {
-    if(!started && e.key==='Enter'){ /* start handled by input */ }
-    return;
-  }
-  const Q=QUIZ[idx];
+document.addEventListener('keydown',function(e){
+  if(!started||done) return;
+  var Q=QUIZ[idx];
   if(Q.t==='mc' && /^[1-9]$/.test(e.key)){
-    const n=+e.key-1;
+    var n=+e.key-1;
     if(n<Q.opts.length){
       answers[idx]=n;
-      card.querySelectorAll('.opt').forEach(o=>o.classList.toggle('sel',+o.dataset.i===n));
+      card.querySelectorAll('.opt').forEach(function(o){o.classList.toggle('sel',+o.dataset.i===n);});
     }
   }
   if(e.key==='Enter'){
     e.preventDefault();
+    next();
+  }
+});
+
+renderStart();
+</script>
+</body>
+</html>
