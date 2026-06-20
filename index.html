@@ -223,8 +223,8 @@ function renderStart(){
     <div class="center">
       <div style="font-size:40px">✏️</div>
       <h2 style="margin:6px 0 2px;color:#9a4a1f">관계대명사 마스터 퀴즈</h2>
-      <p>who · which · that · whose 까지 한 번에!<br>총 <b>20문항</b> · 객관식 + 주관식</p>
-      <input class="ans" id="nameInput" placeholder="이름을 입력하세요 (예: 김민준)" style="margin:14px 0 4px" maxlength="20">
+      <p><b>삼육중 2학년 반정욱</b> 학생 화이팅! 💪<br>who · which · that · whose 까지 한 번에!<br>총 <b>20문항</b> · 객관식 + 주관식</p>
+      <input class="ans" id="nameInput" placeholder="이름을 입력하세요" value="반정욱" style="margin:14px 0 4px" maxlength="20">
       <div class="row"><button class="btn primary" id="startBtn">시작하기 ▶</button></div>
       <div class="kbd">팁&nbsp; 객관식은 <b>1</b>~<b>5</b> 숫자키, 정답 제출은 <b>Enter</b> 키로!</div>
     </div>`;
@@ -401,11 +401,3 @@ document.addEventListener('keydown',e=>{
   }
   if(e.key==='Enter'){
     e.preventDefault();
-    next();
-  }
-});
-
-renderStart();
-</script>
-</body>
-</html>
