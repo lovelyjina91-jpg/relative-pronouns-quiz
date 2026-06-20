@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관계대명사 변형문제 · 내신대비</title>
+<style>
+  :root{
+    --bg:#fff7ec; --card:#ffffff; --ink:#2b2b2b; --sub:#7a7066;
+    --line:#e7ddca; --accent:#e8743b; --accent2:#f0a35e;
+    --good:#2e9e6b; --bad:#e0533d; --pick:#fbe3cf;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(180deg,#fdf3e2,#faf6ef);color:var(--ink);
+    font-family:"Apple SD Gothic Neo","Malgun Gothic",-apple-system,sans-serif;
+    line-height:1.6;-webkit-text-size-adjust:100%;}
+  .wrap{max-width:640px;margin:0 auto;padding:18px 16px 60px;}
+  .title{text-align:center;margin:10px 0 4px;font-size:23px;font-weight:800;color:#9a4a1f;}
+  .sub{text-align:center;color:var(--sub);font-size:14px;margin-bottom:18px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px 20px;box-shadow:0 6px 18px rgba(180,140,90,.10);}
+  .bar{height:9px;background:#f0e6d4;border-radius:99px;overflow:hidden;margin-bottom:16px;}
+  .bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent2),var(--accent));
+    border-radius:99px;transition:width .3s;}
+  .qmeta{font-size:13px;color:var(--accent);font-weight:700;margin-bottom:6px;}
+  .qtype{display:inline-block;font-size:11px;background:var(--pick);color:#b4521f;
+    padding:2px 9px;border-radius:99px;margin-left:6px;font-weight:700;vertical-align:middle;}
+  .qtext{font-size:18px;font-weight:700;margin:4px 0 16px;}
+  .qtext .blank{color:var(--accent);font-weight:800;letter-spacing:1px;}
+  .hint{font-size:13px;color:var(--sub);background:#fbf4e7;border-radius:10px;
+    padding:8px 12px;margin-bottom:14px;}
+  .opt{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);
+    background:#fffdf9;border-radius:12px;padding:11px 14px;margin-bottom:9px;cursor:pointer;
+    transition:.12s;font-size:16px;}
+  .opt:hover{border-color:var(--accent2);}
+  .opt.sel{border-color:var(--accent);background:var(--pick);}
+  .opt .num{flex:none;width:24px;height:24px;border-radius:7px;background:#f0e6d4;color:#9a4a1f;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+  .opt.sel .num{background:var(--accent);color:#fff;}
+  input.ans{width:100%;font-size:17px;padding:12px 14px;border:1.5px solid var(--line);
+    border-radius:12px;outline:none;background:#fffdf9;}
+  input.ans:focus{border-color:var(--accent);}
+  .row{display:flex;gap:10px;margin-top:16px;}
+  .btn{flex:1;border:none;border-radius:13px;padding:13px;font-size:16px;font-weight:800;
+    cursor:pointer;transition:.15s;}
+  .btn.primary{background:var(--accent);color:#fff;}
+  .btn.primary:hover{background:#d2622d;}
+  .btn.ghost{background:#f0e6d4;color:#7a5a36;flex:none;padding:13px 18px;}
+  .kbd{font-size:12px;color:var(--sub);text-align:center;margin-top:12px;}
+  .kbd b{background:#fff;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:#9a4a1f;}
+  /* start */
+  .center{text-align:center;}
+  .center p{color:var(--sub);}
+  /* result */
+  .score{font-size:46px;font-weight:900;color:var(--accent);text-align:center;margin:4px 0;}
+  .score small{font-size:18px;color:var(--sub);font-weight:700;}
+  .grade{text-align:center;font-size:17px;font-weight:800;margin-bottom:8px;}
+  .rev{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:11px 0;}
+  .rev.ok{border-left:5px solid var(--good);}
+  .rev.no{border-left:5px solid var(--bad);}
+  .rev .tag{font-size:12px;font-weight:800;}
+  .rev.ok .tag{color:var(--good);}
+  .rev.no .tag{color:var(--bad);}
+  .rev .q{font-weight:700;margin:6px 0;}
+  .rev .line{font-size:14px;margin:3px 0;}
+  .rev .mine{color:var(--bad);}
+  .rev .corr{color:var(--good);font-weight:700;}
+  .rev .exp{font-size:14px;color:#5b5247;background:#fbf4e7;border-radius:9px;padding:9px 12px;margin-top:8px;}
+  .end{text-align:center;font-size:20px;font-weight:800;color:#9a4a1f;margin:22px 0 6px;}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:#3a322a;color:#fff;padding:11px 20px;border-radius:99px;font-size:14px;
+    opacity:0;transition:.25s;pointer-events:none;font-weight:600;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .foot{text-align:center;color:var(--sub);font-size:12px;margin-top:18px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">📘 관계대명사 변형문제</div>
+  <div class="sub">중2~중3 내신대비 · 학교 추가 프린트 변형 20문항</div>
+  <div class="card" id="card"></div>
+  <div class="foot">지나티처 영어 · 풀고 결과를 카톡으로 보내주세요 😊</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- 문제 데이터 ---------- */
+const QUIZ = [
+ {t:"mc", topic:"주격(사람)",
+  q:'I know a girl <span class="blank">(   )</span> can speak five languages.',
+  hint:"선행사가 사람이고, 관계사절 안에서 주어 역할이에요.",
+  opts:["who","which","whose","what","whom"], a:0,
+  exp:"선행사 a girl(사람)이 관계사절에서 주어 역할을 하므로 주격 관계대명사 who(또는 that)를 써요."},
+
+ {t:"mc", topic:"주격(사물)",
+  q:'This is the book <span class="blank">(   )</span> became a bestseller.',
+  hint:"선행사가 사물일 때 주격은 무엇일까요?",
+  opts:["who","whom","which","of whom","what"], a:2,
+  exp:"선행사 the book(사물)이 주어 역할을 하므로 주격 which(또는 that)를 써요. who는 사람에만 사용해요."},
+
+ {t:"mc", topic:"that의 쓰임",
+  q:'Look at the boy and the dog <span class="blank">(   )</span> are running together.',
+  hint:"선행사가 '사람 + 동물'처럼 섞여 있을 때는?",
+  opts:["who","which","that","whose","what"], a:2,
+  exp:"선행사에 사람과 동물(사물)이 함께 있을 때는 who/which를 쓸 수 없고 that을 써요."},
+
+ {t:"mc", topic:"수일치(단수)",
+  q:'He is the only student who <span class="blank">(   )</span> in the library now.',
+  hint:"주격 관계대명사 뒤 동사는 선행사의 수에 맞춰요.",
+  opts:["are","is","were","have","do"], a:1,
+  exp:"주격 관계대명사 뒤 동사는 선행사 the only student(단수)에 일치시켜요 → is."},
+
+ {t:"mc", topic:"수일치(복수)",
+  q:'I like people who <span class="blank">(   )</span> honest and kind.',
+  hint:"선행사 people은 단수일까요, 복수일까요?",
+  opts:["is","was","am","are","has"], a:3,
+  exp:"선행사 people(복수)에 동사를 일치시켜요 → are."},
+
+ {t:"mc", topic:"소유격",
+  q:'I have a friend <span class="blank">(   )</span> father is a famous chef.',
+  hint:"빈칸 바로 뒤에 명사(father)가 오고 '~의'라는 뜻이에요.",
+  opts:["who","which","whose","whom","that"], a:2,
+  exp:"뒤에 명사가 오고 '친구의 아버지'라는 소유 의미이므로 소유격 whose를 써요."},
+
+ {t:"mc", topic:"목적격(사람)",
+  q:'The man <span class="blank">(   )</span> I met yesterday was very kind.',
+  hint:"선행사가 사람이고, 관계사절 안 동사 met의 목적어 역할이에요.",
+  opts:["which","whose","who(m)","what","of which"], a:2,
+  exp:"선행사 the man(사람)이 met의 목적어 역할을 하므로 목적격 who(m)(또는 that)을 써요."},
+
+ {t:"mc", topic:"소유격(사물)",
+  q:'That is the house <span class="blank">(   )</span> roof is painted red.',
+  hint:"사물에도 소유격 관계대명사를 쓸 수 있어요.",
+  opts:["who","whom","whose","what","when"], a:2,
+  exp:"사물의 소유격도 whose(또는 of which)를 써요. 'the house의 지붕(roof)'."},
+
+ {t:"mc", topic:"관계대명사 생략",
+  q:'Kevin is the boy ( &nbsp;&nbsp; ) reading a novel on his phone.<br><span style="font-size:14px;color:#7a7066">→ 괄호에 들어갈 말 중 <b>생략 가능한</b> 것은?</span>',
+  hint:"분사(reading) 앞에 오는 「주격 관계대명사 + be동사」를 떠올려요.",
+  opts:["who reads","which is","who is","that reads","whom is"], a:2,
+  exp:"분사구(reading...) 앞의 「주격 관계대명사 + be동사」 who is는 생략할 수 있어요. (Kevin is the boy reading...)"},
+
+ {t:"mc", topic:"수일치(어법)",
+  q:'I bought a bag which <span class="blank">(   )</span> made in Italy.',
+  hint:"선행사 a bag의 수에 맞는 be동사를 고르세요.",
+  opts:["are","is","were","have","do"], a:1,
+  exp:"선행사 a bag(단수, 3인칭)에 일치하는 수동태 → is made. are/were는 수가 맞지 않아요."},
+
+ {t:"mc", topic:"목적격(사물)",
+  q:'Soccer is a sport <span class="blank">(   )</span> many people enjoy.',
+  hint:"선행사가 사물이고 enjoy의 목적어 역할이에요.",
+  opts:["who","which","whose","whom","what"], a:1,
+  exp:"선행사 a sport(사물)이 enjoy의 목적어 역할 → 목적격 which(또는 that). whom은 사람에만 써요."},
+
+ {t:"mc", topic:"주격(동물)",
+  q:'She has a parrot <span class="blank">(   )</span> can say hello.',
+  hint:"동물 선행사의 주격 관계대명사는?",
+  opts:["who","whose","which","whom","what"], a:2,
+  exp:"동물 선행사 a parrot의 주격은 which(또는 that)를 써요."},
+
+ {t:"mc", topic:"개념",
+  q:'관계대명사는 어떤 두 가지 역할을 하나요?',
+  hint:"두 문장을 연결하면서 명사를 대신해요.",
+  opts:["접속사 + 대명사","전치사 + 명사","부사 + 동사","형용사 + 명사","감탄사 + 대명사"], a:0,
+  exp:"관계대명사 = 「접속사 + 대명사」 역할을 하며, 이끄는 절은 형용사처럼 선행사를 수식해요."},
+
+ {t:"sa", topic:"주격(사람)",
+  q:'Victor has met the actor <span class="blank">(   )</span> starred in the movie.',
+  hint:"선행사 the actor(사람), 주어 역할 → 한 단어로 쓰세요.",
+  accept:["who","that"], a:"who",
+  exp:"선행사가 사람이고 주어 역할이므로 who(또는 that)를 써요."},
+
+ {t:"sa", topic:"주격(사물)",
+  q:'Daniel works for a company <span class="blank">(   )</span> makes school supplies.',
+  hint:"선행사 a company(사물), 주어 역할.",
+  accept:["which","that"], a:"which",
+  exp:"선행사가 사물이고 주어 역할이므로 which(또는 that)를 써요."},
+
+ {t:"sa", topic:"소유격",
+  q:'I met a boy <span class="blank">(   )</span> sister is a famous singer.',
+  hint:"뒤에 명사(sister)가 오는 '~의' 관계대명사.",
+  accept:["whose"], a:"whose",
+  exp:"'소년의 누나'라는 소유 의미이고 뒤에 명사가 오므로 whose를 써요."},
+
+ {t:"sa", topic:"문장연결",
+  q:'두 문장을 연결하세요.<br><span style="font-size:15px">I know the man. + <u>He</u> helped us.</span><br>→ I know the man <span class="blank">(   )</span> helped us.',
+  hint:"He(사람, 주어)를 관계대명사로 바꿔요.",
+  accept:["who","that"], a:"who",
+  exp:"He(사람, 주어)를 대신하는 주격 관계대명사 who(또는 that)로 두 문장을 연결해요."},
+
+ {t:"sa", topic:"수일치",
+  q:'동사를 알맞은 형태로 쓰세요.<br>This is a watch which <span class="blank">(   )</span> very expensive. <span style="font-size:14px;color:#7a7066">(be)</span>',
+  hint:"선행사 a watch(단수)에 맞는 be동사 현재형.",
+  accept:["is"], a:"is",
+  exp:"주격 관계대명사 뒤 동사는 선행사 a watch(단수)에 일치 → is."},
+
+ {t:"sa", topic:"생략",
+  q:'생략된 두 단어를 쓰세요.<br>The girl <span class="blank">(   )</span> singing on the stage is my sister.',
+  hint:"분사(singing) 앞 「주격 관계대명사 + be동사」.",
+  accept:["who is","that is"], a:"who is",
+  exp:"분사구 앞의 「주격 관계대명사 + be동사」 who is(또는 that is)가 생략된 형태예요."},
+
+ {t:"sa", topic:"목적격(사물)",
+  q:'두 문장을 연결하세요.<br><span style="font-size:15px">This is the cake. + I made <u>it</u>.</span><br>→ This is the cake <span class="blank">(   )</span> I made.',
+  hint:"it(사물, 목적어)을 관계대명사로 바꿔요.",
+  accept:["which","that"], a:"which",
+  exp:"it(사물, made의 목적어)을 대신하는 목적격 관계대명사 which(또는 that)로 연결해요."}
+];
+
+/* ---------- 상태 ---------- */
+let idx=0, started=false, done=false;
+let answers=new Array(QUIZ.length).fill(null); // mc: index, sa: string
+const card=document.getElementById('card');
+const toast=document.getElementById('toast');
+let studentName="";
+
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),1700);}
+
+/* ---------- 시작 화면 ---------- */
+function renderStart(){
+  card.innerHTML=`
+    <div class="center">
+      <div style="font-size:40px">✏️</div>
+      <h2 style="margin:6px 0 2px;color:#9a4a1f">관계대명사 마스터 퀴즈</h2>
+      <p>who · which · that · whose 까지 한 번에!<br>총 <b>20문항</b> · 객관식 + 주관식</p>
+      <input class="ans" id="nameInput" placeholder="이름을 입력하세요 (예: 김민준)" style="margin:14px 0 4px" maxlength="20">
+      <div class="row"><button class="btn primary" id="startBtn">시작하기 ▶</button></div>
+      <div class="kbd">팁&nbsp; 객관식은 <b>1</b>~<b>5</b> 숫자키, 정답 제출은 <b>Enter</b> 키로!</div>
+    </div>`;
+  const ni=document.getElementById('nameInput');
+  ni.focus();
+  document.getElementById('startBtn').onclick=start;
+  ni.addEventListener('keydown',e=>{if(e.key==='Enter')start();});
+}
+function start(){
+  const ni=document.getElementById('nameInput');
+  studentName=(ni&&ni.value.trim())||"학생";
+  started=true; idx=0; renderQ();
+}
+
+/* ---------- 문제 화면 ---------- */
+function renderQ(){
+  const Q=QUIZ[idx];
+  const pct=Math.round((idx)/QUIZ.length*100);
+  let body=`
+    <div class="bar"><i style="width:${pct}%"></i></div>
+    <div class="qmeta">Q${idx+1} / ${QUIZ.length}
+      <span class="qtype">${Q.t==='mc'?'객관식':'주관식'}</span>
+      <span class="qtype">${Q.topic}</span></div>
+    <div class="qtext">${Q.q}</div>
+    <div class="hint">💡 ${Q.hint}</div>`;
+  if(Q.t==='mc'){
+    body+=`<div id="opts">`;
+    Q.opts.forEach((o,i)=>{
+      const sel=answers[idx]===i?'sel':'';
+      body+=`<div class="opt ${sel}" data-i="${i}"><span class="num">${i+1}</span><span>${o}</span></div>`;
+    });
+    body+=`</div>`;
+  }else{
+    const v=answers[idx]||"";
+    body+=`<input class="ans" id="saInput" placeholder="정답을 입력하세요" value="${v.replace(/"/g,'&quot;')}" autocomplete="off">`;
+  }
+  body+=`<div class="row">`;
+  if(idx>0) body+=`<button class="btn ghost" id="prevBtn">← 이전</button>`;
+  body+=`<button class="btn primary" id="nextBtn">${idx===QUIZ.length-1?'제출하고 결과 보기 🎉':'다음 →'}</button></div>`;
+  body+=`<div class="kbd">${Q.t==='mc'?'<b>1</b>~<b>'+Q.opts.length+'</b> 숫자키로 선택, ':''}<b>Enter</b> 키로 ${idx===QUIZ.length-1?'제출':'다음'}</div>`;
+  card.innerHTML=body;
+
+  if(Q.t==='mc'){
+    card.querySelectorAll('.opt').forEach(el=>{
+      el.onclick=()=>{answers[idx]=+el.dataset.i;
+        card.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+        el.classList.add('sel');};
+    });
+  }else{
+    const si=document.getElementById('saInput'); si.focus();
+    const len=si.value.length; si.setSelectionRange(len,len);
+    si.addEventListener('input',()=>{answers[idx]=si.value;});
+  }
+  const nb=document.getElementById('nextBtn'); nb.onclick=next;
+  const pb=document.getElementById('prevBtn'); if(pb) pb.onclick=()=>{idx--;renderQ();};
+}
+
+function next(){
+  const Q=QUIZ[idx];
+  if(Q.t==='sa'){const si=document.getElementById('saInput'); answers[idx]=si.value.trim();}
+  if(answers[idx]===null||answers[idx]===""||answers[idx]===undefined){
+    showToast("답을 선택하거나 입력해 주세요!"); return;
+  }
+  if(idx===QUIZ.length-1){renderResult();}
+  else{idx++; renderQ();}
+}
+
+/* ---------- 채점 ---------- */
+function isCorrect(i){
+  const Q=QUIZ[i], ans=answers[i];
+  if(Q.t==='mc') return ans===Q.a;
+  if(ans==null) return false;
+  const norm=s=>s.toLowerCase().replace(/\s+/g,' ').replace(/[.。]/g,'').trim();
+  return Q.accept.map(norm).includes(norm(ans));
+}
+function myAnswerText(i){
+  const Q=QUIZ[i], ans=answers[i];
+  if(ans==null||ans==="") return "(무응답)";
+  return Q.t==='mc'? (ans+1)+". "+Q.opts[ans] : ans;
+}
+function correctText(i){
+  const Q=QUIZ[i];
+  return Q.t==='mc'? (Q.a+1)+". "+Q.opts[Q.a] : Q.a;
+}
+
+/* ---------- 결과 화면 ---------- */
+function renderResult(){
+  done=true;
+  let correct=0; QUIZ.forEach((q,i)=>{if(isCorrect(i))correct++;});
+  const total=QUIZ.length;
+  const wrong=[]; QUIZ.forEach((q,i)=>{if(!isCorrect(i))wrong.push(i);});
+  let grade,emoji;
+  const r=correct/total;
+  if(r===1){grade="완벽해요! 만점!";emoji="🏆";}
+  else if(r>=0.8){grade="아주 잘했어요!";emoji="🌟";}
+  else if(r>=0.6){grade="좋아요, 조금만 더!";emoji="👍";}
+  else{grade="복습이 필요해요. 화이팅!";emoji="💪";}
+
+  let html=`
+    <div class="bar"><i style="width:100%"></i></div>
+    <div class="center">
+      <div style="font-size:38px">${emoji}</div>
+      <div class="score">${correct}<small> / ${total}</small></div>
+      <div class="grade">${studentName} 학생 — ${grade}</div>
+    </div>
+    <h3 style="margin:18px 0 6px;color:#9a4a1f">📝 문제별 해설</h3>`;
+
+  QUIZ.forEach((q,i)=>{
+    const ok=isCorrect(i);
+    html+=`<div class="rev ${ok?'ok':'no'}">
+      <div class="tag">${ok?'✅ 정답':'❌ 오답'} · Q${i+1} (${q.topic})</div>
+      <div class="q">${q.q}</div>
+      <div class="line mine">내 답: ${myAnswerText(i)}</div>
+      ${ok?'':`<div class="line corr">정답: ${correctText(i)}</div>`}
+      <div class="exp">📖 ${q.exp}</div>
+    </div>`;
+  });
+
+  html+=`
+    <div class="row" style="flex-direction:column;gap:10px">
+      <button class="btn primary" id="copyBtn">📋 지나티처에게 결과 보내기 (메시지 복사)</button>
+      <button class="btn ghost" id="retryBtn" style="flex:1;padding:13px">🔁 다시 풀기</button>
+    </div>
+    <div class="kbd">복사 후 카카오톡 지나티처에게 붙여넣기 하면 돼요!</div>
+    <div class="end">수고했습니당 ~~~ ㅎㅎㅎ</div>`;
+  card.innerHTML=html;
+  window.scrollTo(0,0);
+
+  document.getElementById('copyBtn').onclick=()=>copyResult(correct,total,wrong);
+  document.getElementById('retryBtn').onclick=()=>{answers=new Array(QUIZ.length).fill(null);idx=0;done=false;renderStart();};
+}
+
+/* ---------- 카톡 메시지 복사 ---------- */
+function copyResult(correct,total,wrong){
+  const today=new Date();
+  const ds=`${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}`;
+  let msg=`[관계대명사 변형문제 결과]\n`;
+  msg+=`👩‍🏫 지나티처님께\n`;
+  msg+=`이름: ${studentName}\n날짜: ${ds}\n`;
+  msg+=`점수: ${correct} / ${total}\n`;
+  if(wrong.length===0){ msg+=`\n🎉 전부 맞았어요! 완벽합니다!\n`; }
+  else{
+    msg+=`\n틀린 문제(${wrong.length}개):\n`;
+    wrong.forEach(i=>{
+      msg+=`· Q${i+1} (${QUIZ[i].topic}) — 내 답: ${myAnswerText(i)} / 정답: ${correctText(i)}\n`;
+    });
+  }
+  msg+=`\n수고했습니당 ~~~ ㅎㅎㅎ`;
+
+  const fallback=()=>{ const ta=document.createElement('textarea');
+    ta.value=msg; document.body.appendChild(ta); ta.select();
+    try{document.execCommand('copy');showToast("메시지가 복사됐어요! 카톡에 붙여넣기 하세요 ✨");}
+    catch(e){showToast("복사 실패 — 길게 눌러 복사해 주세요");}
+    document.body.removeChild(ta);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(msg).then(
+      ()=>showToast("메시지가 복사됐어요! 카톡에 붙여넣기 하세요 ✨"), fallback);
+  }else fallback();
+}
+
+/* ---------- 전역 키 입력 ---------- */
+document.addEventListener('keydown',e=>{
+  if(!started||done) {
+    if(!started && e.key==='Enter'){ /* start handled by input */ }
+    return;
+  }
+  const Q=QUIZ[idx];
+  if(Q.t==='mc' && /^[1-9]$/.test(e.key)){
+    const n=+e.key-1;
+    if(n<Q.opts.length){
+      answers[idx]=n;
+      card.querySelectorAll('.opt').forEach(o=>o.classList.toggle('sel',+o.dataset.i===n));
+    }
+  }
+  if(e.key==='Enter'){
+    e.preventDefault();
+    next();
+  }
+});
+
+renderStart();
+</script>
+</body>
+</html>
